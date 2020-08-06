@@ -1,0 +1,505 @@
+\documentclass[a4paper,11pt,oneside,titlepage]{report}
+
+\input{prologue}
+
+\newcommand{\lib}{wxAda}
+\renewcommand{\myauthor}{Luke A. Guest}
+\renewcommand{\mycopyright}{\textsf{\footnotesize{Copyright \copyright\ 2003 \myauthor}}}
+\myhypersetup{\myauthor}{\lib}{}{GUI Toolkit}
+
+\renewcommand{\mytitle}{\lib}
+\renewcommand{\mysubtitle}{Design Document}
+%\renewcommand{\mysection}[1]{\newpage\section{#1}\lhead{\mytitle: \mysubtitle}\rhead{#1}}
+
+\begin{document}
+
+\title{\mytitle: \mysubtitle}
+\author{\myauthor}
+\date{9th February 2005}
+\maketitle
+
+\pagenumbering{roman}
+ 
+\section{Requirements}
+
+\pagenumbering{arabic}
+
+\begin{itemize}
+\item Provide only those features that Ada doesn't already provide, i.e. no wxThread as Ada provides tasking.
+\item Simplify the interface to the types, the C++ methods are too complex; the Ada equivalents should be controlled types which call th
+      default constructor on the object, then a create function which actually initialises it.s
+\item Make the types look as Ada-like as possible, i.e. a thick binding.
+\item Provide a method for internationalising applications, Ada doesn't provide a preprocessor so using \texttt{\_T()} or
+      \texttt{\_()} isn't an option.
+\item Don't use wxString, pass Ada String's to functions.
+\item Try to match the objects to specific libraries, i.e. wxBase, wxCore, wxAdvanced, etc.
+\item An event function needs to be implemented which will be called and handles the C -> Ada event mechanism.
+\item When any object is passed to another, e.g. sizers, a list of items needs to be kept, so that nothing is leaked. This is a problem, because
+      wxWidgets free's any items that are passed to it, i.e. a frame will delete it's children.
+\item Exceptions, if there are any, need to be propogated to Ada.
+\end{itemize}
+
+\subsection(Classes that need Ada equivalents)
+
+\begin{itemize}
+\item \texttt{wxObject -> wx.Object}
+\item \texttt{wxEvtHandler -> wx.EvtHandler}
+\item \texttt{wxWindow -> wx.Window}
+\item \texttt{wxTopLevelWindow -> wx.TopLevelWindow}
+\item \texttt{wxFrame -> wx.Frame}
+\item \texttt{wxButton -> wx.Button}
+\item \texttt{}
+\item \texttt{}
+\end{itemize}
+
+\subsection(Classes that will be created)
+
+\begin{itemize}
+\item \texttt{wxAcceleratorEntry}
+\item \texttt{wxAcceleratorTable}
+\item \texttt{wxAccessible}
+\item \texttt{wxActivateEvent}
+\item \texttt{wxApp}
+\item \texttt{wxArtProvider}
+\item \texttt{wxAutomationObject}
+\item \texttt{wxBitmap}
+\item \texttt{wxBitmapButton}
+\item \texttt{wxBitmapDataObject}
+\item \texttt{wxBitmapHandler}
+\item \texttt{wxBoxSizer}
+\item \texttt{wxBrush}
+\item \texttt{wxBrushList}
+\item \texttt{wxBufferedDC}
+\item \texttt{wxBufferedPaintDC}
+\item \texttt{wxBusyCursor}
+\item \texttt{wxBusyInfo}
+\item \texttt{wxButton}
+\item \texttt{wxCalculateLayoutEvent}
+\item \texttt{wxCalendarCtrl}
+\item \texttt{wxCalendarDateAttr}
+\item \texttt{wxCalendarEvent}
+\item \texttt{wxCaret}
+\item \texttt{wxCheckBox}
+\item \texttt{wxCheckListBox}
+\item \texttt{wxChoice}
+\item \texttt{wxChoicebook}
+\item \texttt{wxClient}
+\item \texttt{wxClientDC}
+\item \texttt{wxClientData}
+\item \texttt{wxClientDataContainer}
+\item \texttt{wxClipboard}
+\item \texttt{wxCloseEvent}
+\item \texttt{wxColour}
+\item \texttt{wxColourData}
+\item \texttt{wxColourDatabase}
+\item \texttt{wxColourDialog}
+\item \texttt{wxComboBox}
+\item \texttt{wxCommand}
+\item \texttt{wxCommandEvent}
+\item \texttt{wxCommandProcessor}
+\item \texttt{wxConfigBase}
+\item \texttt{wxConnection}
+\item \texttt{wxContextHelp}
+\item \texttt{wxContextHelpButton}
+\item \texttt{wxControl}
+\item \texttt{wxControlWithItems}
+\item \texttt{wxCursor}
+\item \texttt{wxCustomDataObject}
+\item \texttt{wxDataFormat}
+\item \texttt{wxDataObject}
+\item \texttt{wxDataObjectComposite}
+\item \texttt{wxDataObjectSimple}
+\item \texttt{wxDateSpan}
+\item \texttt{wxDateTime}
+\item \texttt{wxDateTimeHolidayAuthority}
+\item \texttt{wxDateTimeWorkDays}
+\item \texttt{wxDb}
+\item \texttt{wxDbColDataPtr}
+\item \texttt{wxDbColDef}
+\item \texttt{wxDbColFor}
+\item \texttt{wxDbColInf}
+\item \texttt{wxDbConnectInf}
+\item \texttt{wxDbIdxDef}
+\item \texttt{wxDbInf}
+\item \texttt{wxDbTable}
+\item \texttt{wxDbTableInf}
+\item \texttt{wxDbGridColInfo}
+\item \texttt{wxDbGridTableBase}
+\item \texttt{wxDDEClient}
+\item \texttt{wxDDEConnection}
+\item \texttt{wxDDEServer}
+\item \texttt{wxDebugContext}
+\item \texttt{wxDebugStreamBuf}
+\item \texttt{wxDelegateRendererNative}
+\item \texttt{wxDC}
+\item \texttt{wxDCClipper}
+\item \texttt{wxDialog}
+\item \texttt{wxDialUpEvent}
+\item \texttt{wxDialUpManager}
+\item \texttt{wxDir}
+\item \texttt{wxDirDialog}
+\item \texttt{wxDirTraverser}
+\item \texttt{wxDisplay}
+\item \texttt{wxDllLoader}
+\item \texttt{wxDocChildFrame}
+\item \texttt{wxDocManager}
+\item \texttt{wxDocMDIChildFrame}
+\item \texttt{wxDocMDIParentFrame}
+\item \texttt{wxDocParentFrame}
+\item \texttt{wxDocTemplate}
+\item \texttt{wxDocument}
+\item \texttt{wxDragImage}
+\item \texttt{wxDropFilesEvent}
+\item \texttt{wxDropSource}
+\item \texttt{wxDropTarget}
+\item \texttt{wxDynamicLibrary}
+
+\item \texttt{wxEraseEvent}
+\item \texttt{wxEvent}
+\item \texttt{wxEvtHandler}
+\item \texttt{wxFFile}
+\item \texttt{wxFFileInputStream}
+\item \texttt{wxFFileOutputStream}
+\item \texttt{wxFFileStream}
+\item \texttt{wxFile}
+\item \texttt{wxFileConfig}
+\item \texttt{wxFileDataObject}
+\item \texttt{wxFileDialog}
+\item \texttt{wxFileDropTarget}
+\item \texttt{wxFileHistory}
+\item \texttt{wxFileInputStream}
+\item \texttt{wxFileName}
+\item \texttt{wxFileOutputStream}
+\item \texttt{wxFileStream}
+\item \texttt{wxFileSystem}
+\item \texttt{wxFileSystemHandler}
+\item \texttt{wxFileType}
+\item \texttt{wxFilterInputStream}
+\item \texttt{wxFilterOutputStream}
+\item \texttt{wxFindDialogEvent}
+\item \texttt{wxFindReplaceData}
+\item \texttt{wxFindReplaceDialog}
+\item \texttt{wxFlexGridSizer}
+\item \texttt{wxFocusEvent}
+\item \texttt{wxFont}
+\item \texttt{wxFontData}
+\item \texttt{wxFontDialog}
+\item \texttt{wxFontEnumerator}
+\item \texttt{wxFontList}
+\item \texttt{wxFontMapper}
+\item \texttt{wxFrame}
+\item \texttt{wxFSFile}
+\item \texttt{wxFTP}
+\item \texttt{wxGauge}
+\item \texttt{wxGBPosition}
+\item \texttt{wxGBSizerItem}
+\item \texttt{wxGBSpan}
+\item \texttt{wxGDIObject}
+\item \texttt{wxGenericDirCtrl}
+\item \texttt{wxGenericValidator}
+\item \texttt{wxGLCanvas}
+\item \texttt{wxGLContext}
+\item \texttt{wxGrid}
+\item \texttt{wxGridCellAttr}
+\item \texttt{wxGridBagSizer}
+\item \texttt{wxGridCellBoolEditor}
+\item \texttt{wxGridCellChoiceEditor}
+\item \texttt{wxGridCellEditor}
+\item \texttt{wxGridCellFloatEditor}
+\item \texttt{wxGridCellNumberEditor}
+\item \texttt{wxGridCellTextEditor}
+\item \texttt{wxGridEditorCreatedEvent}
+\item \texttt{wxGridEvent}
+\item \texttt{wxGridRangeSelectEvent}
+\item \texttt{wxGridSizeEvent}
+\item \texttt{wxGridCellBoolRenderer}
+\item \texttt{wxGridCellFloatRenderer}
+\item \texttt{wxGridCellNumberRenderer}
+\item \texttt{wxGridCellRenderer}
+\item \texttt{wxGridCellStringRenderer}
+\item \texttt{wxGridTableBase}
+\item \texttt{wxGridSizer}
+\item \texttt{wxHelpController}
+\item \texttt{wxHelpControllerHelpProvider}
+\item \texttt{wxHelpEvent}
+\item \texttt{wxHelpProvider}
+\item \texttt{wxHtmlCell}
+\item \texttt{wxHtmlColourCell}
+\item \texttt{wxHtmlContainerCell}
+\item \texttt{wxHtmlDCRenderer}
+\item \texttt{wxHtmlEasyPrinting}
+\item \texttt{wxHtmlFilter}
+\item \texttt{wxHtmlHelpController}
+\item \texttt{wxHtmlHelpData}
+\item \texttt{wxHtmlHelpFrame}
+\item \texttt{wxHtmlLinkInfo}
+\item \texttt{wxHtmlListBox}
+\item \texttt{wxHtmlParser}
+\item \texttt{wxHtmlPrintout}
+\item \texttt{wxHtmlTag}
+\item \texttt{wxHtmlTagHandler}
+\item \texttt{wxHtmlTagsModule}
+\item \texttt{wxHtmlWidgetCell}
+\item \texttt{wxHtmlWindow}
+\item \texttt{wxHtmlWinParser}
+\item \texttt{wxHtmlWinTagHandler}
+\item \texttt{wxHTTP}
+\item \texttt{wxIcon}
+\item \texttt{wxIconBundle}
+\item \texttt{wxIconLocation}
+\item \texttt{wxIconizeEvent}
+\item \texttt{wxIdleEvent}
+\item \texttt{wxImage}
+\item \texttt{wxImageHandler}
+\item \texttt{wxImageList}
+\item \texttt{wxIndividualLayoutConstraint}
+\item \texttt{wxInitDialogEvent}
+
+\item \texttt{wxIPaddress}
+\item \texttt{wxIPV4address}
+\item \texttt{wxJoystick}
+\item \texttt{wxJoystickEvent}
+\item \texttt{wxKeyEvent}
+\item \texttt{wxLayoutAlgorithm}
+\item \texttt{wxLayoutConstraints}
+\item \texttt{wxList}
+\item \texttt{wxListbook}
+\item \texttt{wxListBox}
+\item \texttt{wxListCtrl}
+\item \texttt{wxListEvent}
+\item \texttt{wxListItem}
+\item \texttt{wxListView}
+\item \texttt{wxLocale}
+\item \texttt{wxLog}
+\item \texttt{wxLogChain}
+\item \texttt{wxLogGui}
+\item \texttt{wxLogNull}
+\item \texttt{wxLogPassThrough}
+\item \texttt{wxLogStderr}
+\item \texttt{wxLogStream}
+\item \texttt{wxLogTextCtrl}
+\item \texttt{wxLogWindow}
+\item \texttt{wxLongLong}
+\item \texttt{wxMask}
+\item \texttt{wxMaximizeEvent}
+
+\item \texttt{wxMDIChildFrame}
+\item \texttt{wxMDIClientWindow}
+\item \texttt{wxMDIParentFrame}
+\item \texttt{wxMemoryBuffer}
+\item \texttt{wxMemoryDC}
+\item \texttt{wxMemoryFSHandler}
+\item \texttt{wxMemoryInputStream}
+\item \texttt{wxMemoryOutputStream}
+\item \texttt{wxMenu}
+\item \texttt{wxMenuBar}
+\item \texttt{wxMenuEvent}
+\item \texttt{wxMenuItem}
+\item \texttt{wxMessageDialog}
+\item \texttt{wxMetafile}
+\item \texttt{wxMetafileDC}
+\item \texttt{wxMimeTypesManager}
+\item \texttt{wxMiniFrame}
+\item \texttt{wxMirrorDC}
+\item \texttt{wxModule}
+\item \texttt{wxMouseCaptureChangedEvent}
+\item \texttt{wxMouseEvent}
+\item \texttt{wxMoveEvent}
+\item \texttt{wxMultiChoiceDialog}
+\item \texttt{wxNode}
+\item \texttt{wxNotebook}
+\item \texttt{wxNotebookEvent}
+\item \texttt{wxNotebookSizer}
+\item \texttt{wxNotifyEvent}
+\item \texttt{wxObject}
+\item \texttt{wxObjectRefData}
+
+\item \texttt{wxPageSetupDialog}
+\item \texttt{wxPageSetupDialogData}
+\item \texttt{wxPaintDC}
+\item \texttt{wxPaintEvent}
+\item \texttt{wxPalette}
+\item \texttt{wxPanel}
+\item \texttt{wxPathList}
+\item \texttt{wxPen}
+\item \texttt{wxPenList}
+\item \texttt{wxPlotCurve}
+\item \texttt{wxPlotWindow}
+\item \texttt{wxPoint}
+\item \texttt{wxPostScriptDC}
+\item \texttt{wxPreviewCanvas}
+\item \texttt{wxPreviewControlBar}
+\item \texttt{wxPreviewFrame}
+\item \texttt{wxPrintData}
+\item \texttt{wxPrintDialog}
+\item \texttt{wxPrintDialogData}
+\item \texttt{wxPrinter}
+\item \texttt{wxPrinterDC}
+\item \texttt{wxPrintout}
+\item \texttt{wxPrintPreview}
+\item \texttt{wxPrivateDropTarget}
+\item \texttt{wxProcess}
+\item \texttt{wxProcessEvent}
+\item \texttt{wxProgressDialog}
+\item \texttt{wxProtocol}
+\item \texttt{wxQuantize}
+\item \texttt{wxQueryLayoutInfoEvent}
+\item \texttt{wxRadioBox}
+\item \texttt{wxRadioButton}
+\item \texttt{wxRealPoint}
+\item \texttt{wxRect}
+\item \texttt{wxRecursionGuard}
+\item \texttt{wxRecursionGuardFlag}
+\item \texttt{wxRegEx}
+\item \texttt{wxRegion}
+\item \texttt{wxRegionIterator}
+\item \texttt{wxRendererNative}
+\item \texttt{wxRendererVersion}
+\item \texttt{wxSashEvent}
+\item \texttt{wxSashLayoutWindow}
+\item \texttt{wxSashWindow}
+\item \texttt{wxScreenDC}
+\item \texttt{wxScrollBar}
+\item \texttt{wxScrolledWindow}
+\item \texttt{wxScrollEvent}
+\item \texttt{wxScrollWinEvent}
+\item \texttt{wxServer}
+\item \texttt{wxSimpleHelpProvider}
+\item \texttt{wxSingleChoiceDialog}
+\item \texttt{wxSingleInstanceChecker}
+\item \texttt{wxSize}
+\item \texttt{wxSizeEvent}
+\item \texttt{wxSizer}
+\item \texttt{wxSizerItem}
+\item \texttt{wxSlider}
+\item \texttt{wxSockAddress}
+\item \texttt{wxSocketBase}
+\item \texttt{wxSocketClient}
+\item \texttt{wxSocketEvent}
+\item \texttt{wxSocketInputStream}
+\item \texttt{wxSocketOutputStream}
+\item \texttt{wxSocketServer}
+\item \texttt{wxSound}
+\item \texttt{wxSpinButton}
+\item \texttt{wxSpinCtrl}
+\item \texttt{wxSpinEvent}
+\item \texttt{wxSplashScreen}
+\item \texttt{wxSplitterEvent}
+\item \texttt{wxSplitterWindow}
+\item \texttt{wxSplitterRenderParams}
+\item \texttt{wxStaticBitmap}
+\item \texttt{wxStaticBox}
+\item \texttt{wxStaticBoxSizer}
+\item \texttt{wxStaticLine}
+\item \texttt{wxStaticText}
+\item \texttt{wxStatusBar}
+\item \texttt{wxStopWatch}
+
+\item \texttt{wxSysColourChangedEvent}
+\item \texttt{wxSystemOptions}
+\item \texttt{wxSystemSettings}
+\item \texttt{wxTabCtrl}
+\item \texttt{wxTabEvent}
+\item \texttt{wxTaskBarIcon}
+\item \texttt{wxTCPClient}
+\item \texttt{wxTCPConnection}
+\item \texttt{wxTCPServer}
+\item \texttt{wxTempFile}
+\item \texttt{wxTextAttr}
+\item \texttt{wxTextCtrl}
+\item \texttt{wxTextDataObject}
+\item \texttt{wxTextDropTarget}
+\item \texttt{wxTextEntryDialog}
+\item \texttt{wxTextFile}
+\item \texttt{wxTextInputStream}
+\item \texttt{wxTextOutputStream}
+\item \texttt{wxTextValidator}
+
+\item \texttt{wxTipProvider}
+\item \texttt{wxTipWindow}
+\item \texttt{wxToggleButton}
+\item \texttt{wxToolBar}
+\item \texttt{wxToolTip}
+\item \texttt{wxTopLevelWindow}
+\item \texttt{wxTreeCtrl}
+\item \texttt{wxTreeEvent}
+\item \texttt{wxTreeItemData}
+\item \texttt{wxUpdateUIEvent}
+\item \texttt{wxURL}
+\item \texttt{wxValidator}
+\item \texttt{wxVariant}
+\item \texttt{wxVariantData}
+\item \texttt{wxView}
+\item \texttt{wxVListBox}
+\item \texttt{wxVScrolledWindow}
+\item \texttt{wxWindow}
+\item \texttt{wxWindowDC}
+\item \texttt{wxWindowDisabler}
+\item \texttt{wxWizard}
+\item \texttt{wxWizardEvent}
+\item \texttt{wxWizardPage}
+\item \texttt{wxWizardPageSimple}
+\item \texttt{wxXmlResource}
+\item \texttt{wxXmlResourceHandler}
+\item \texttt{wxZipInputStream}
+\item \texttt{wxZlibInputStream}
+\item \texttt{wxZlibOutputStream}
+\end{itemize}
+
+\subsection(Undetermined classes)
+
+\begin{itemize}
+\item \texttt{wxBufferedInputStream}
+\item \texttt{wxBufferedOutputStream}
+\item \texttt{wxClassInfo}
+\item \texttt{wxCmdLineParser}
+\item \texttt{wxCountingOutputStream}
+\item \texttt{wxDataInputStream}
+\item \texttt{wxDataOutputStream}
+\item \texttt{wxEncodingConverter}
+\item \texttt{wxInputStream}
+\item \texttt{wxMBConv}
+\item \texttt{wxMBConvFile}
+\item \texttt{wxMBConvUTF7}
+\item \texttt{wxMBConvUTF8}
+\item \texttt{wxMBConvUTF16}
+\item \texttt{wxMBConvUTF32}
+\item \texttt{wxOutputStream}
+\item \texttt{wxStreamBase}
+\item \texttt{wxStreamBuffer}
+\item \texttt{wxStreamToTextRedirector}
+\item \texttt{wxTimer}
+\item \texttt{wxTimerEvent}
+\item \texttt{wxTimeSpan}
+\end{itemize}
+
+\subsection(Classes that won't be created)
+
+\begin{itemize}
+\item \texttt{wxArray}
+\item \texttt{wxArrayString}
+\item \texttt{wxCondition}
+\item \texttt{wxCriticalSection}
+\item \texttt{wxCriticalSectionLocker}
+\item \texttt{wxCSConv}
+\item \texttt{wxHashMap}
+\item \texttt{wxHashTable}
+\item \texttt{wxMutex}
+\item \texttt{wxMutexLocker}
+\item \texttt{wxScopedArray}
+\item \texttt{wxScopedPtr}
+\item \texttt{wxScopedTiedPtr}
+\item \texttt{wxSemaphore}
+\item \texttt{wxString}
+\item \texttt{wxStringBuffer}
+\item \texttt{wxStringClientData}
+\item \texttt{wxStringInputStream}
+\item \texttt{wxStringList}
+\item \texttt{wxStringOutputStream}
+\item \texttt{wxStringTokenizer}
+\item \texttt{wxThread}
+\item \texttt{wxThreadHelper}
+\item \texttt{wxThreadHelperThread}
+\end{itemize}
+
+\end{document}

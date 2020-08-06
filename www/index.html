@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <style type="text/css">
+    /* <![CDATA[ */ 
+    @import "http://www.tigris.org/branding/css/tigris.css"; 
+    @import "http://www.tigris.org/branding/css/inst.css"; 
+    /*  ]]> */
+    </style>
+    <link rel="stylesheet" type="text/css" href="http://www.tigris.org/branding/css/print.css" media="print" />
+    <script src="http://www.tigris.org/branding/scripts/tigris.js" type="text/javascript">
+    </script>
+    <title>Project Overview</title>
+  </head>
+  <body>
+    <h3>Important News</h3>
+    
+    <p>This project is currently stalled. The source code has been uploaded in it's *current* state for people to look
+       over and possibly extend. During my latest work on the project, I found that the C++ objects we causing a problem
+       due to the way that they were derived. wxValidator is derived from wxEvtHandler which in turn is derived from
+       wxObject; the wxEvtHandler is a non-copyable object yet the others are copyable. <b>Please see the TODO file
+       for more information</b>. I do have some C/C++ and Ada source files that have not been included into the
+       repository, I will create a new directory for these samples so that if they're required they can be added to the
+       main src/ directory at a later date.
+       
+    <h3>Misson</h3>
+
+    <p>The aim of this project is to provide a free, portable, minimal, Ada-like bindings library to the wxWidgets GUI library.
+    
+    <p>wxAda v1.0 will target the Ada95 programming language utilising any Ada95 compliant compiler (initially the FSF GNAT). Only when wxAda
+       is stable and has enough of wxWidgets wrapped <b>and</b> the Ada 2005 support has stabilised will a binding to
+       Ada 2005 will be started.
+    
+    <p>wxAda v1.0 will also target wxWidgets-2.6.x series, as this is stable, i.e. the API isn't changing.
+
+    <h3>Free</h3>
+
+    <p>Some people don't use a library because they cannot afford to, the wxAda library is free from these types of licencing requirements. it
+       can be used by anyone that wants to and if they want to make some money from their creation, then they should be able to do so, so long as
+       they don't try to pass the wxAda library off as their own creation. In other words, the wxAda library is released under the wxWidgets
+       licence.
+
+    <h3>Portable</h3>
+
+    <p>Binding to C++ isn't defined by the Ada standards and is implemented in an inconsistent manner on the compilers that do support
+       it. Although it's nice to have interoperability between different languages, it just would have been very difficult to provide
+       bindings that worked in a portable manner if these C++ binding interfaces were used.
+
+    <p>Different C++ compilers mangle names in different ways, so building the wxWidgets libraries with one C++ compiler could cause
+       incompatabilities between the Ada compiler.
+
+    <p>Because of the above reasons, it has been necessary to bind from Ada to C++ using an intermediate C layer and where necessary
+       derive wxAda-specific intermediate C++ classes. If wxWidgets was developed in C a lot of these problems could easily have been avoided,
+       not just for wxAda, but for every other language binding to the library.
+
+    <p>So, as wxAda uses C wrappers around C++ code it is possible to have just one set of source which can be compiled "out of the box"
+       under different platforms, i.e. build the wxWidgets libraries for your platform, then compile the wxAda library using your Ada &amp;
+       C++ compilers and it will just work!
+
+    <h3>Minimal</h3>
+
+    <p>Ada is a very powerful language and provides a lot of useful types in it's standard packages (libraries), e.g. tasking is built into
+       the language and the language's string handling is particularly powerful. Because of these features, it is not necessary to duplicate
+       any functionality already found within the language or the standard packages. In other words, any features which exist in both wxWidgets
+       and the Ada runtime, the Ada runtime variant will be preffered and the wxWidgets version will not be wrapped.
+
+    <p>By cutting down the number of wxWidgets classes to implement in Ada we can in turn cut down the size of the actual built C++ libraries.
+
+    <h3>Ada-Like</h3>
+
+    <p>wxAda should look and feel just like the standard Ada packages.
+  </body>
+</html>

@@ -1,0 +1,12 @@
+--disable-shared
+--disable-stl
+--enable-no_rtti
+--enable-no_exceptions
+--disable-exceptions
+--disable-ffile
+--disable-file
+--disable-filesystem
+--disable-unicode
+--with-gnomeprint
+--with-opengl
+--with-odbc

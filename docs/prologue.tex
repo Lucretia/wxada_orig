@@ -1,0 +1,57 @@
+\usepackage{pslatex}
+%\usepackage{pst-uml}
+%\usepackage{pst-all}
+%\usepackage{pstricks}
+%\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{calc}
+\usepackage{fancyhdr}
+\usepackage{draftcopy}
+
+\pagestyle{fancy}
+
+\draftcopyName{CONFIDENTIAL}{100}
+\draftcopySetGrey{0.85}
+
+\bibliographystyle{alpha}
+
+% Create the new commands here.
+\newcommand{\myauthor}{}
+\newcommand{\mytitle}{}
+\newcommand{\mysubtitle}{}
+\newcommand{\mysection}[1]{
+	\newpage\section{#1}
+	\lhead{
+		\textsc{
+			\textsf{
+				\mytitle: \mysubtitle
+			}
+		}
+	}
+	\rhead{\textsc{\textsf{#1}}}
+}
+\newcommand{\mysubsubsection}[1]{\subsubsection{\textit{#1}}}
+\newcommand{\mycopyright}{}
+
+\newcommand{\myhypersetup}[4]{
+	%\usepackage{thumbpdf}
+	\usepackage[colorlinks,bookmarks,ps2pdf]{hyperref}
+	\hypersetup{
+	  pdfauthor={#1},
+	  pdftitle={#2},
+	  pdfsubject={#3},
+	  pdfkeywords={#4},
+	  % These next 3 lines forces the view to ``Fit Width'' on startup of Acrobat.
+	  pdfstartview={FitH \hypercalcbp{
+		\paperheight-\topmargin-\headheight-\headsep-1in+2mm
+	  }}
+	}
+}
+
+% Set up my default styles here, so we only need to change the lhead!
+\chead{}
+\lfoot{\mycopyright}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.10pt}
+\renewcommand{\footrulewidth}{0.10pt}

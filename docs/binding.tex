@@ -1,0 +1,131 @@
+\section{Binding overview}\label{bindingoverview}
+
+%Classes, functions and macros: \helpref{wxDebugContext}{wxdebugcontext}, \helpref{wxObject}{wxobject}, \helpref{wxLog}{wxlog},
+%\rtfsp\helpref{Log functions}{logfunctions}, \helpref{Debug macros}{debugmacros}
+
+\wxheading{Introduction}
+
+A binding is a library of wrapper code that enables another language to use the wxWidgets C++ classes natively as if it were written
+in that other language. I will concentrate on binding from C++ (the source language) to another object-oriented language (the target
+language).
+
+Inside the target language a separate class\footnote{The target language may not call the class by this name.} hierarchy will be
+created, this hierarchy will mirror the C++ class hierarchy such that when a class in the target language is instantiated the C++
+class will also be instantiated at the same time.
+
+\subsection{Wrapper functions}\label{wrapperfunctions}
+
+There is no standard for C++ name mangling and every compiler mangles names differently, so importing C++ classes into another language
+can be tricky or just impossible. Not only that, even if the target language does support importing classes, different compilers generate
+different names thus the target language's compiler would have to be psychic!
+
+Due to this it is necessary to create a number of functions which flatten out to the objects into simple function calls with the object
+instance (this) as the first parameter. This is what the compiler for an OO language generates anyway.
+
+\subsection{Application initialisation}\label{applicationinitialisation}
+
+This is one of the most complex parts of the binding process due to the way wxWidgets initialises itself. The target language will
+probably handle command line arguments differently so using wxEntry is the best way forward. wxEntry calls wxApp::OnInit, this is
+where the complications arise; constructing the app before wxWidgets has initialised itself will cause a crash, yet the app will want
+to initialise itself, hence a cyclic initialisation sequence exists.
+
+\subsection{Class wrapping}\label{classwrapping}
+
+Certain classes need to be derived from inside the source language before they can be wrapped into the target language. This will be
+due to pure virtual functions that have to be derived, e.g. Clone. Some of these virtuals will need to be wrapped so that the call can be
+forwarded to the target language.
+
+\begin{itemize}\itemsep=0pt
+\item wxApp
+\item wxEvent
+\item wxEvtHandler
+\item wxSizer
+\item wxValidator
+\item wxWindow
+\end{itemize}
+
+\subsection{Event handling}\label{eventhandling}
+
+Event's are a very tricky part of the binding process as two different scenarios will show:
+
+\begin{enumerate}\itemsep=0pt
+\item Deriving a new event class from within the target language.
+\item Forwarding C++ event instances to the target language.
+\end{enumerate}
+
+In both cases, both the C++ class instance and the target language's class instance need to be available. In the first case the event
+thunker must get hold of the target language's instance and forward that onto the target language's event handling code. In the second
+case the event thunker must generate a target language wrapper instance which will be destroyed as soon as possible and must not own the
+source language's instance.
+
+Another area where a binding will probably differ is the event tables. wxAda and wxPython do not use wxEventTable. In C++ the wxEventTable
+is built up using the EVT_*() macros, this is not possible under wxAda and wxPython and they use the wxEvtHandler::Connect member function
+instead.
+
+Examples of how different bindings handle the thunking can be found here:
+
+\begin{itemize}\itemsep=0pt
+\item{\bf wxPython/src/helpers.cpp} wxPyCallback::EventThunker
+\item{\bf wxEiffel/elj-2002/lib/ifs/c/ewxw/wrapper.cpp} ELJApp::HandleEvent
+\item{\bf wxAda/src/c/wxbase_evthandler.cc} wxAdaCallbackObject::EventHandler
+\end{itemize}
+
+\subsection{Virtual functions}\label{virtualfunctions}
+
+Any virtual function in a source language class needs to be forwarded onto the target language's class.
+
+Source class virtual calls a target language virtual proxy, which in turn calls the target language's virtual. The target language's
+virtual then needs to call the base virtual.
+
+{\small
+\begin{verbatim}
+class wxTargetEvtHandler : public wxEvtHandler
+	{
+	public:
+		...
+		
+		// If this function is called on an instance of any class derived from this class from within the wxWidgets library
+		// the correct virtual function inside the target language will be called.
+		virtual bool ProcessEvent(wxEvent& event)
+			{
+			// Call the target language virtual proxy, or if possible, call the virtual directly.
+			}
+		
+		inline bool Base_ProcessEvent(wxEvent& event)
+			{
+			return wxEvtHandler::ProcessEvent(event);
+			}
+			
+		...
+	};
+
+extern "C"
+	{
+	...
+
+	// This function is made available so that the correct source language member function is called from the target language.
+ 	int wxEvtHandler_Base_ProcessEvent(wxTargetEvtHandler *Self, wxEvent *Event)
+		{
+		return Self->Base_ProcessEvent(*Event) == true ? 1 : 0;
+		}
+	
+	...
+	};
+\end{verbatim}
+}%
+
+The virtual call in the binding language can then decide whether or not to call the base implementation from within itself.
+
+In some bindings, e.g. wxPython, wxLua, etc. a test is made for the presence of a virtual function in the target language's instance and
+if it exists call it, otherwise call the base class. In wxAda it is enough to inherit a new C++ class which forwards the virtual call onto
+the Ada primitive sub-program (i.e. member function) as the correct primitive will be called and any Ada derived tagged type (i.e. class)
+which overrides that particular sub-program will call the parent's sub-program if it needs to.
+
+Examples of how different bindings handle virtual functions can be found here:
+
+\begin{itemize}\itemsep=0pt
+\item{\bf wxLua254/Library/wxLuaPrinting.cpp} wxLuaPrintout::HasPage
+\item{\bf wxPython/src/_treectrl.i} wxPyTreeCtrl::OnCompareItems
+\item{\bf wxAda/src/c/} 
+\end{itemize}
+

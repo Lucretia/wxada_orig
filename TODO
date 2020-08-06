@@ -1,0 +1,142 @@
+--------------------------------------
+-- TODO List as of 28th August 2006 --
+--------------------------------------
+
+----------
+-- High --
+----------
+
+* Also when using Add_Pending_Event (see the samples/minimal code) would copy the wxEvent derived class, this
+  currently crashes the application, because the Ada object cannot be copied. This would require some method of
+  reference counting in the Ada code and cross calling from C to Ada, which is going to get confusing.
+    
+* I have uploaded the source as it is so that the Ada community can look at it and help out. If you want wxAda
+  to survive, I can only suggest that you see if you can help out in any way. Be warned, the source isn't in the
+  best state as I was confused with regards to class-wide primitives, of which I do understand now (I think). This
+  source does need cleaning.
+
+* Review the Instance store and the Factory:
+  - Do we really need them?
+  - Is this the best way to do this?
+  - Is there a better way to do this?
+  - Change the way the wxAda C++ classes are created:
+    1) Each class that is available in wxAda should derive from 2 classes, the actual wxWidgets class and a
+       wxAdaInstance class - this class provides access to the stored Ada instance, all C++ classes can get access
+       to it's associated Ada object.
+
+* The instance store is used from both the C++ and the Ada side.
+  1) In virtual calls to Ada from C++
+  2) In Ada when:
+     1) Finding a window or a parent window and needing to determine whether it is a normal C++ type or an Ada type.
+     2) When processing events and needing to determine whether it is a normal C++ type or an Ada type.
+
+* The factory is used only from Ada.
+
+* All wxAda tagged types should have C++ classes which derive from the associated wxWidgets C++ class *and*
+  a new wxAdaInstance class. The wxAdaInstance class provides storage for the wxAda tagged type instance.
+  + The C++ side requires finding the Ada types when handling events and virtual functions, this needs to be
+    handled in 2 ways:
+    1) Events - check the C++ class name and see if it starts with "wxAda," if it does we can get the Ada instance
+       from the wxAdaInstance class that it is derived from, if it doesn't, create a temporary instance from
+       the wxAda factory.
+    2) Virtuals - Will only be called from "wxAda" types, therefore the instance can be retrieved from wxAdaInstance.
+
+* Forget about the defs.h window styles and trying to convert them to a hierarchical type which enables deriving
+  style ID's for derived classes. Separate them out so that each window has it's own set of style ID's, even if this
+  means duplicating names.
+
+* wxSizer:
+  + This is an abstract class, make the wxAda type abstract also.
+  + Add the virtuals so that they propagate from the C++ side to the Ada side.
+
+* Ensure that class-wide operations are marked as such on all types.
+
+------------
+-- Medium --
+------------
+
+* Work out how to wrap the NULL GDI objects, e.g. wxNull_Pen, etc.
+
+---------
+-- Low --
+---------
+
+* Window derived types should never be deleted, but rather Destroy should be called on the type. All other wxWidget
+  classes should be deletable. All of this unhooking should be handled in Finalize. Should this unhooking be done
+  by wxAda? As, in wxWidgets, all windows delete their children.
+
+* wxWindow:
+  + Should it know about validators and sizers? If we removed this, we could have a subprogram in both validator
+    and sizer which "attached" the window to the validator and sizer, respectively. If we did this, the extra
+    packages wx.Core.Root_Sizer and wx.Core.Root_Validator could be removed as the cyclic dependency would be removed.
+
+* Look into 2-step construction of the C++ objects from within wxAda, such that Initialize creates an object, but
+  the programmer must later "construct" the object with a call to it's "Create_??" subprogram. This way the wxAda
+  object would be initialised during elaboration rather than being set to null.
+
+* Unicode strings are still a problem, how are they to be implemented for different builds of wxWidgets?
+  Preprocessing code is not an option.
+
+* Look into the possibility of having 2 hierarchies:
+  1) Rooted at wx.Base.Object.Object_Type, and
+  2) Rooted at wx.Base.Limited_Object.Limited_Object_Type
+  + This would allow having objects that can be copied (GDI objects) and those which cannot (Windows).
+  + How would this affect the factory code? It wouldn't be possible to say that Create_Ada_Object could return
+    1 root type, there would have to be soe way to determine whether the object was limited or not.
+  + 1 definite problem would be where the C++ objects derive from copyable objects, then non-copyable objects and
+    then provide a way to copy itself, i.e.
+      wxValidator (provides the Clone() method but only copies the relevant wxValidator (and derived) fields) ->
+        wxEvtHandler (non-copyable - declared using the "DECLARE_DYNAMIC_CLASS_NO_COPY" macro) ->
+          wxObject (copyable)
+
+* Separate into component libraries which match the wxWidgets libraries:
+  + i.e. libwx_gtk2_core-2.6.so = libwx_ada_core-1.0.so, libwx_gtk2_gl-2.6.so = libwx_ada_gl-1.0.so, etc:
+  + Also add pragma Linker_With for GNAT packages which link with the appropriate wxWidgets libraries when the relevant wxAda package is
+    with'ed. This way we won't need to use wx-config - how do we link with different versions? Use different installation (adalib) directories?
+    - Place the pragma into separate packages which are different for different library build versions (unicode, debug, release, etc.) and
+      compilers (GNAT, ObjectAda, etc.). These will be placed in different directories.
+
+* Provide the renames for identifiers that have different spellings, for the Americans who can't spell ;-)
+
+* Get wxAda working on different Ada compilers? How many free ones are there? Will different vendors provide demos to get it to work?
+
+------------------------------------------------------
+-- Everything below needs to be revised or removed! --
+------------------------------------------------------
+
+TODO List as of 5th December 2005
+----------------------------------
+
+* There's no reason for Initialize and Finalize to be private in any package as far as I can see.
+
+* Remove all other access and view types from each wx.* package. i.e. Frame_Access, Frame_View, etc.
+
+* Replace all *_Class parameters with "in *_Type'Class" parameters instead.
+
+* Make sure all of the virtuals that can be implemented in wxAda from the C++ side are implemented via the macros for the Ada side.
+
+* Get the wxValidator's working after the core controls are working.
+
+* Make sure the documentation in the source code allows matching the new Ada names to the old C++ names, especially constants.
+
+TODO List as of 15th November 2005
+----------------------------------
+
+* Synchronisation in event handling code in all types derived from Event_Handler_Type. The base type implements a protected object
+  which is used to synchronise access to the event posting subprograms. The derived types do not have this protected object! How can
+  this be implemented? Should this be handled at client application level?
+  + Could implement a subset of the threading mechanism in wxWidgets, i.e. implement a semaphore using a protected type. By then wrapping
+    access to event processing mechanisms in the Event_Handler_Type and it's derived types, we can ensure task safety!
+  + Implement wxSemaphore, wxMutex.
+  + Is wxCondition needed?
+  + Should the wx*Locker classes need to be ported across? ** Similar to smart pointers **
+  
+* Finalisation of each type needs to be sorted out so all the correct Finalize primitives are called on the correct types, i.e:
+  + N.B: Using the Destroy functions in the window derived types causes a crash. It seems the instance store has been finalized and all entries
+         have been removed, such that when at the end of the app, when the window is actually finalized, it is too late! Maybe the Ada type needs
+         to be stored in the C++ instance after all? This is being done whether Destroy is called inside Finalize or not! Maybe Destroy cannot be
+         overridden after all!?
+  + All windows should be destroyed.
+  + All sizers should be unhooked.
+  + Anything that can be destructed on the C++ side should be.
+

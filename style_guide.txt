@@ -1,0 +1,28 @@
+wxAda progamming style guide
+============================
+
+* Use 2 spaces for indentation on each level.
+
+* Capitalise identifiers and use underscores to separate words, i.e. This_Is_An_Identifier rather than this_is_an_identifier.
+
+* Do not "use" a package, only "with" it; this way everything is obvious to the reader as to where a particular operation is coming from.
+
+* Use the Identifier "Self" to specify the controlling operand for a primitive operation.
+
+* All C functions which are interfaces to the C++ wxWidgets library must be placed in the relevant private interface package, e.g.
+  wx.Base.Object.C contains the constructor and destructor for wxObject's.
+
+* Any cyclic dependencies must be worked around by creating a dummy type in it's own package with relevant Initialise and Finalize
+  procedures which raise Program_Error. This dummy type can then be used safely in the problem package, e.g. wx.Core.Window.Set_Sizer
+  and wx.Core.Root_Sizer.Root_Sizer_Type.
+
+* Include the standard comment at the top of each source file, specifying the filename, licence and copyright holder(s). Add any
+  extra notes into this comment.
+
+* Follow the wxWidgets class hierarchy as closely as possible and map this to Ada packages.
+
+* Only provide wxAda types for wxWidgets classes that are not provided in Ada or the standard runtime, hence, wxThread, wxString, etc.
+  are not provided by wxAda.
+
+* Modify wxWidgets identifiers to more readable names where appropriate, e.g. wx.Core.Window.Find_Window is overloaded rather than
+  having multiple names wxWindow::FindWindow, wxWindow::FindWindowByName, wxWindow::FindWindowById, etc.
